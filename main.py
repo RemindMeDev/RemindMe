@@ -1,3 +1,6 @@
+# RemindMe v1.1
+# © William George 2025
+
 import customtkinter as ctk
 from datetime import datetime, timedelta
 from tkinter import messagebox as mb
