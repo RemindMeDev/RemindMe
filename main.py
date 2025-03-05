@@ -402,9 +402,9 @@ def viewList(number):
     def renameListEntry ():
         global nameEntry, confirmButton
         nameEntry = ctk.CTkEntry(frame, placeholder_text="Enter new name")
-        nameEntry.grid(row=len(items) + 4, column=0, padx=20, pady=10)
+        nameEntry.grid(row=len(items) + 4, column=0, padx=20, pady=10, columnspan=2)
         confirmButton = ctk.CTkButton(frame, text="Confirm", command=lambda: renameList(nameEntry.get()))
-        confirmButton.grid(row=len(items) + 5, column=0, padx=20, pady=10)
+        confirmButton.grid(row=len(items) + 5, column=0, padx=20, pady=10, columnspan=2)
 
 
     def renameList(new_name):
@@ -648,9 +648,9 @@ def viewFamilyList(number):
     def renameListEntry():
         global nameEntry, confirmButton
         nameEntry = ctk.CTkEntry(frame, placeholder_text="Enter new name")
-        nameEntry.grid(row=len(items) + 4, column=0, padx=20, pady=10)
+        nameEntry.grid(row=len(items) + 4, column=0, padx=20, pady=10, columnspan=2)
         confirmButton = ctk.CTkButton(frame, text="Confirm", command=lambda: renameList(nameEntry.get()))
-        confirmButton.grid(row=len(items) + 5, column=0, padx=20, pady=10)
+        confirmButton.grid(row=len(items) + 5, column=0, padx=20, pady=10, columnspan=2)
 
     def renameList(new_name):
         with open('currentFamilyList', 'r') as currentFamilyListFile:
