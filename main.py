@@ -1257,6 +1257,9 @@ def signupPage():
                 print("Sign Up successful")  # Print success message
                 with open('user', 'w') as userFile:
                     userFile.write(simpleEncryption.decrypt(currentUsername))
+            else:
+                label = ctk.CTkLabel(frame, text="Login Unsuccessful", font=("Roboto", 15))
+                label.grid(row=4, column=0, padx=20, pady=10)
             message = s.recv(2048).decode('UTF-8')  # Receive response
             if message == 'data incoming':
                 message = s.recv(2048).decode('UTF-8')
@@ -1343,6 +1346,9 @@ def loginPage():
                 print("Login successful")  # Print success message
                 with open('user', 'w') as userFile:
                     userFile.write(simpleEncryption.decrypt(currentUsername))
+            else:
+                label = ctk.CTkLabel(frame, text="Sign Up Unsuccessful", font=("Roboto", 15))
+                label.grid(row=4, column=0, padx=20, pady=10)
 
                 message = s.recv(2048).decode('UTF-8')  # Receive response
                 if message == 'data incoming':  # If the server recognises the login combination
