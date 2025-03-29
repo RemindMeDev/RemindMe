@@ -196,8 +196,7 @@ while True:
 
            if not items:
                with open (listFilename, 'w') as file:
-                   for item in items:
-                       file.write('Add your items below' + '\n')
+                    file.write('Add your items below' + '\n')
            else:
                print (items)
                print (newmessage)

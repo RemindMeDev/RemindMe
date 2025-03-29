@@ -240,6 +240,7 @@ def createnewflist():
 
 def viewList(number):
     edit_buttons = []
+
     class EditButton (ctk.CTkButton):
         def __init__(self, capturedN):
             super().__init__(frame, text="Edit", command=lambda n=n: editItemButton(n), width=15)
@@ -295,13 +296,18 @@ def viewList(number):
         print(items)
 
     def getEntry(event):
-        items.append(itemEntry.get())
-        populateList()
-        itemEntry.delete(0, ctk.END)
-        itemEntry.grid(row=len(items) + 1, column=0, padx=20, pady=10)
-        addButton.grid(row=len(items) + 1, column=1, padx=20, pady=10)
-        closeButton.grid(row=len(items) + 2, column=0, padx=20, pady=10)
-        renameButton.grid(row=len(items) + 3, column=0, padx=20, pady=10)
+        if len(itemEntry.get()) > 43:
+            mb.showerror("Item too long", "Your item should be less than 44 characters long.")
+        elif itemEntry.get() == '':
+            mb.showerror("No item entered", "Please enter at least one character.")
+        else:
+            items.append(itemEntry.get())
+            populateList()
+            itemEntry.delete(0, ctk.END)
+            itemEntry.grid(row=len(items) + 1, column=0, padx=20, pady=10)
+            addButton.grid(row=len(items) + 1, column=1, padx=20, pady=10)
+            closeButton.grid(row=len(items) + 2, column=0, padx=20, pady=10)
+            renameButton.grid(row=len(items) + 3, column=0, padx=20, pady=10)
 
     def sendNewList(list_name):
         if itemEntry.get() != '':
@@ -354,15 +360,18 @@ def viewList(number):
         items.remove(items[item])  # Remove the item from the list
         print(items)
         populateList()  # Refresh the list of checkboxes
-        with open('points', 'r') as pointsFile:
-            points = int(pointsFile.read())
-        points += 1
-        with open('points', 'w') as pointsFile:
-            pointsFile.write(str(points))
+        if items[item] != 'Add your items below':
+            with open('points', 'r') as pointsFile:
+                points = int(pointsFile.read())
+            points += 1
+            with open('points', 'w') as pointsFile:
+                pointsFile.write(str(points))
 
     edit_widgets = {}
 
     def editItemButton(item):
+        for cb in check_boxes:
+            cb.configure(state='disabled')
         text = items[item]
         for button in edit_buttons:
             if button.value == item:
@@ -394,6 +403,8 @@ def viewList(number):
         del edit_widgets[item]
         check_boxes[item].configure(text=newValue)
         populateList()
+        for cb in check_boxes:
+            cb.configure(state='normal')
 
 
     def closeButton():
@@ -411,22 +422,27 @@ def viewList(number):
 
 
     def renameList(new_name):
-        with open('currentList', 'r') as currentListFile:
-            currentList = currentListFile.read()
-        s.send('rename personal list'.encode('UTF-8'))  # Send login message
-        message = s.recv(2048).decode('UTF-8')  # Receive response
-        if message == 'ready to rename list':  # If the server is ready for login
-            print("Connection successful")  # Print success message
-            s.send(username.encode('UTF-8'))  # Send login message
-            time.sleep(0.1)
-            s.send(currentList.encode('UTF-8'))
-            time.sleep (0.1)
-            s.send (new_name.encode('UTF-8'))
-        with open('currentList', 'w') as currentList:
-            currentList.write(new_name)
-        welcome.configure(text=new_name)  # Update the displayed list name
-        nameEntry.destroy()
-        confirmButton.destroy()
+        if len(new_name) > 13:
+            mb.showerror("Name too long", "Your list name should be less than 14 characters long.")
+        elif new_name == '':
+            mb.showerror("No name entered", "Please enter at least one character for a list name.")
+        else:
+            with open('currentList', 'r') as currentListFile:
+                currentList = currentListFile.read()
+            s.send('rename personal list'.encode('UTF-8'))  # Send login message
+            message = s.recv(2048).decode('UTF-8')  # Receive response
+            if message == 'ready to rename list':  # If the server is ready for login
+                print("Connection successful")  # Print success message
+                s.send(username.encode('UTF-8'))  # Send login message
+                time.sleep(0.1)
+                s.send(currentList.encode('UTF-8'))
+                time.sleep (0.1)
+                s.send (new_name.encode('UTF-8'))
+            with open('currentList', 'w') as currentList:
+                currentList.write(new_name)
+            welcome.configure(text=new_name)  # Update the displayed list name
+            nameEntry.destroy()
+            confirmButton.destroy()
 
     title = ctk.CTkLabel(app, text="RemindMe", font=("Roboto", 30, "bold"))
     title.grid(row=0, column=0, padx=20, pady=20)
@@ -464,7 +480,7 @@ def viewList(number):
 
 
 def deleteList (number):
-    result = mb.askokcancel(title="Delete List", message="Are you sure you want to delete this list?", icon=mb.QUESTION)
+    result = mb.askyesno(title="Delete List", message="Are you sure you want to delete this list?", icon=mb.QUESTION)
     if result:
         string = "[" + usernameTest + "]" + "deleteList<" + str(number) + ">"
         s.send(string.encode('UTF-8'))
@@ -478,14 +494,18 @@ def deleteList (number):
         pass
 
 def deleteFamilyList (number):
-    string = "[" + getFamily + "]" + "deleteFamilyList<" + str(number) + ">"
-    s.send(string.encode('UTF-8'))
-    message = s.recv(2048).decode('UTF-8')
-    if message == 'deleted':
-        clear_window(app)
-        drawHomeElements()
-    elif message == 'error':
-        print ("ERROR: Could not delete")
+    result = mb.askyesno(title="Delete List", message="Are you sure you want to delete this list?", icon=mb.QUESTION)
+    if result:
+        string = "[" + getFamily + "]" + "deleteFamilyList<" + str(number) + ">"
+        s.send(string.encode('UTF-8'))
+        message = s.recv(2048).decode('UTF-8')
+        if message == 'deleted':
+            clear_window(app)
+            drawHomeElements()
+        elif message == 'error':
+            print ("ERROR: Could not delete")
+    else:
+        pass
 
 
 def viewFamilyList(number):
@@ -544,13 +564,18 @@ def viewFamilyList(number):
         itemEntry.focus()
 
     def getEntry(event):
-        items.append(itemEntry.get())
-        populateList()
-        itemEntry.delete(0, ctk.END)
-        itemEntry.grid(row=len(items) + 1, column=0, padx=20, pady=10)
-        addButton.grid(row=len(items) + 1, column=1, padx=20, pady=10)
-        closeButton.grid(row=len(items) + 2, column=0, padx=20, pady=10)
-        renameButton.grid(row=len(items) + 3, column=0, padx=20, pady=10)
+        if len(itemEntry.get()) > 43:
+            mb.showerror("Item too long", "Your item should be less than 44 characters long.")
+        elif itemEntry.get() == '':
+            mb.showerror("No item entered", "Please enter at least one character.")
+        else:
+            items.append(itemEntry.get())
+            populateList()
+            itemEntry.delete(0, ctk.END)
+            itemEntry.grid(row=len(items) + 1, column=0, padx=20, pady=10)
+            addButton.grid(row=len(items) + 1, column=1, padx=20, pady=10)
+            closeButton.grid(row=len(items) + 2, column=0, padx=20, pady=10)
+            renameButton.grid(row=len(items) + 3, column=0, padx=20, pady=10)
 
 
     check_boxes = []
@@ -578,15 +603,18 @@ def viewFamilyList(number):
         items.remove(items[item])  # Remove the item from the list
         print(items)
         populateList()  # Refresh the list of checkboxes
-        with open('points', 'r') as pointsFile:
-            points = int(pointsFile.read())
-        points += 1
-        with open('points', 'w') as pointsFile:
-            pointsFile.write(str(points))
+        if items[item] != 'Add your items below':
+            with open('points', 'r') as pointsFile:
+                points = int(pointsFile.read())
+            points += 1
+            with open('points', 'w') as pointsFile:
+                pointsFile.write(str(points))
 
     edit_widgets = {}
 
     def editItemButton(item):
+        for cb in check_boxes:
+            cb.configure(state='disabled')
         text = items[item]
         for button in edit_buttons:
             if button.value == item:
@@ -618,6 +646,8 @@ def viewFamilyList(number):
         del edit_widgets[item]
         check_boxes[item].configure(text=newValue)
         populateList()
+        for cb in check_boxes:
+            cb.configure(state='normal')
 
     def sendNewList(list_name):
         if itemEntry.get () != '':
@@ -656,22 +686,27 @@ def viewFamilyList(number):
         confirmButton.grid(row=len(items) + 5, column=0, padx=20, pady=10, columnspan=2)
 
     def renameList(new_name):
-        with open('currentFamilyList', 'r') as currentFamilyListFile:
-            currentFamilyList = currentFamilyListFile.read()
-        s.send('rename family list'.encode('UTF-8'))  # Send login message
-        message = s.recv(2048).decode('UTF-8')  # Receive response
-        if message == 'ready to rename list':  # If the server is ready for login
-            print("Connection successful")  # Print success message
-            s.send(family.encode('UTF-8'))  # Send login message
-            time.sleep(0.1)
-            s.send(currentFamilyList.encode('UTF-8'))
-            time.sleep(0.1)
-            s.send(new_name.encode('UTF-8'))
-        with open('currentFamilyList', 'w') as currentFamilyListFile:
-            currentFamilyListFile.write(new_name)
-        welcome.configure(text=new_name)  # Update the displayed list name
-        nameEntry.destroy()
-        confirmButton.destroy()
+        if len(new_name) > 13:
+            mb.showerror("Name too long", "Your list name should be less than 14 characters long.")
+        elif new_name == '':
+            mb.showerror("No name entered", "Please enter at least one character for a list name.")
+        else:
+            with open('currentFamilyList', 'r') as currentFamilyListFile:
+                currentFamilyList = currentFamilyListFile.read()
+            s.send('rename family list'.encode('UTF-8'))  # Send login message
+            message = s.recv(2048).decode('UTF-8')  # Receive response
+            if message == 'ready to rename list':  # If the server is ready for login
+                print("Connection successful")  # Print success message
+                s.send(family.encode('UTF-8'))  # Send login message
+                time.sleep(0.1)
+                s.send(currentFamilyList.encode('UTF-8'))
+                time.sleep(0.1)
+                s.send(new_name.encode('UTF-8'))
+            with open('currentFamilyList', 'w') as currentFamilyListFile:
+                currentFamilyListFile.write(new_name)
+            welcome.configure(text=new_name)  # Update the displayed list name
+            nameEntry.destroy()
+            confirmButton.destroy()
 
 
     title = ctk.CTkLabel(app, text="RemindMe", font=("Roboto", 30, "bold"))
@@ -1370,8 +1405,8 @@ def loginPage():
                 drawHomeElements()
 
 
-            else:  # If the server does not recognise the login combination
-                print("Login failed")  # Print failure message
+                
+
 
 
     clear_window(app)
