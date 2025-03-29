@@ -28,6 +28,7 @@ if getFamily == '':
 global s
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.connect((socket.gethostname(), 6060)) # Connect to the server
+print (f'socket details: {s}')
 
 
 def clear_window(window):
@@ -1243,6 +1244,8 @@ def drawHomeElements ():
     streakNumberText = ctk.CTkLabel(streakBox, text=str(streakAmount), font=("Roboto", 20))
     streakNumberText.grid(row=1, column=0, padx=20)
 
+listener_process = subprocess.Popen(['python3', 'notificationListener.py'])
+print ('STARTED LISTENER PROCESS')
 
 xSize = 800
 ySize = 650
@@ -1384,25 +1387,25 @@ def loginPage():
             else:
                 label = ctk.CTkLabel(frame, text="Sign Up Unsuccessful", font=("Roboto", 15))
                 label.grid(row=4, column=0, padx=20, pady=10)
+            message = s.recv(2048).decode('UTF-8')  # Receive response
+            if message == 'data incoming':  # If the server recognises the login combination
+                print ('got to after')
+                message = s.recv(2048).decode('UTF-8')
+                with open('streakAmount', 'w') as streakAmountFile:
+                    streakAmountFile.write(message)
+                message = s.recv(2048).decode('UTF-8')
+                with open('points', 'w') as pointsFile:
+                    pointsFile.write(message)
+                message = s.recv(2048).decode('UTF-8')
+                with open('streak', 'w') as streakFile:
+                    streakFile.write(message)
+                message = s.recv(2048).decode('UTF-8')
+                with open('family', 'w') as familyFile:
+                    familyFile.write(message)
 
-                message = s.recv(2048).decode('UTF-8')  # Receive response
-                if message == 'data incoming':  # If the server recognises the login combination
-                    message = s.recv(2048).decode('UTF-8')
-                    with open('streakAmount', 'w') as streakAmountFile:
-                        streakAmountFile.write(message)
-                    message = s.recv(2048).decode('UTF-8')
-                    with open('points', 'w') as pointsFile:
-                        pointsFile.write(message)
-                    message = s.recv(2048).decode('UTF-8')
-                    with open('streak', 'w') as streakFile:
-                        streakFile.write(message)
-                    message = s.recv(2048).decode('UTF-8')
-                    with open('family', 'w') as familyFile:
-                        familyFile.write(message)
 
-
-                clear_window(app)
-                drawHomeElements()
+            clear_window(app)
+            drawHomeElements()
 
 
                 
@@ -1462,8 +1465,7 @@ else:
     pass
 
 
-listener_process = subprocess.Popen(['python3', 'notificationListener.py'])
-print ('STARTED LISTENER PROCESS')
+
 
 
 
