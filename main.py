@@ -1,4 +1,4 @@
-# RemindMe v1.1
+# RemindMe v1.2 Mac Edition
 # © William George 2025
 
 import customtkinter as ctk
@@ -358,15 +358,18 @@ def viewList(number):
 
     def completeTask(item):
         print('Completed task ' + str(item) + " which was " + items[item])
-        items.remove(items[item])  # Remove the item from the list
-        print(items)
-        populateList()  # Refresh the list of checkboxes
         if items[item] != 'Add your items below':
             with open('points', 'r') as pointsFile:
                 points = int(pointsFile.read())
+                print (f"Points: {points}")
             points += 1
+            print (f"Points: {points}")
             with open('points', 'w') as pointsFile:
                 pointsFile.write(str(points))
+        items.remove(items[item])  # Remove the item from the list
+        print(items)
+        populateList()  # Refresh the list of checkboxes
+        
 
     edit_widgets = {}
 
@@ -601,15 +604,16 @@ def viewFamilyList(number):
 
     def completeTask(item):
         print('Completed task ' + str(item) + " which was " + items[item])
-        items.remove(items[item])  # Remove the item from the list
-        print(items)
-        populateList()  # Refresh the list of checkboxes
         if items[item] != 'Add your items below':
             with open('points', 'r') as pointsFile:
                 points = int(pointsFile.read())
             points += 1
             with open('points', 'w') as pointsFile:
                 pointsFile.write(str(points))
+        items.remove(items[item])  # Remove the item from the list
+        print(items)
+        populateList()  # Refresh the list of checkboxes
+        
 
     edit_widgets = {}
 
