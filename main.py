@@ -201,6 +201,8 @@ def sendNewData(close):
 
 
 def createnewlist():
+    with open('user', 'r') as user:
+        getUsername = user.read()
     # Connect to the server
     s.send('create new list'.encode('UTF-8'))  # Send login message
     message = s.recv(2048).decode('UTF-8')  # Receive response
@@ -1116,7 +1118,8 @@ def drawHomeElements ():
     pointsAmount = points
 
     def createnewlistRedrawn():
-
+        with open('user', 'r') as user:
+            getUsername = user.read()
         # Connect to the server
         s.send('create new list'.encode('UTF-8'))  # Send login message
         message = s.recv(2048).decode('UTF-8')  # Receive response
