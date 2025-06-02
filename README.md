@@ -1,10 +1,11 @@
+
 # Welcome
 Welcome to RemindMe, a family organisation and planning reminders app.
 
 # Features
 * Personal todo lists
 * Shared Family to-do lists
-* Assign tasks to family members
+* Assign tasks to family members with syntax: '*task* | *username*'
 * Notifications for new tasks
 * Rename and delete lists
 * Edit to-do items
@@ -23,20 +24,13 @@ Then close this window.
 
 2. Now, open two terminal windows. In the first, run:
 ```bash
-cd "<path to directory where RemindMe is stored>/server" 
-```
-Then run:
-```bash
-python3 server.py
+cd "<path to directory where RemindMe is stored>/server" && python3 server.py
 ```
 3. In the second terminal window, run:
 ```bash
-cd "<path to directory where RemindMe is stored>"
+cd "<path to directory where RemindMe is stored>" && python3 RUN_APP.py
 ```
-Then run:
-```bash
-python3 RUN_APP.py
-```
+
 
 ### Windows:
 1. Open a command prompt window. Run:
@@ -61,4 +55,4 @@ Then run:
 python RUN_APP.py
 ```
 ---
-If at any point the app stops working, try closing the terminal/command prompt windows and repeat steps 2 and 3
+If at any point the app stops working, try closing the terminal/command prompt windows and repeat steps 2 and 3.
